@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  username       String
+  email          String       @unique
+  password       String
+  isActivated    Boolean      @default(false)
+  activationLink String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  sessions       Session[]
+  languages      Language[]
+  dictionaries   Dictionary[]
+}
+
+model Session {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  token       String   @unique
+  city        String
+  country     String
+  device      String
+  loginSource String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Language {
+  id           Int          @id @default(autoincrement())
+  name         String       
+  userId       Int
+  user         User         @relation(fields: [userId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  dictionaries Dictionary[]
+}
+
+model Dictionary {
+  id         Int      @id @default(autoincrement())
+  name       String
+  languageId Int
+  userId     Int
+  language   Language @relation(fields: [languageId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  words      Word[]
+}
+
+model Word {
+  id           Int        @id @default(autoincrement())
+  original     String
+  translation  String
+  dictionaryId Int
+  dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
