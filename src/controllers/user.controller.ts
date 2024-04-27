@@ -26,7 +26,7 @@ class UserController {
 
       const updateUserDto: UpdateUserDto = req.body;
       const updatedUser = await userService.updateUser(
-        currentUser.email,
+        currentUser.id,
         updateUserDto
       );
 
@@ -45,7 +45,7 @@ class UserController {
   ): Promise<void> {
     try {
       const currentUser = req.currentUser;
-      const deletedUser = await userService.deleteUser(currentUser.email);
+      const deletedUser = await userService.deleteUser(currentUser.id);
       res
         .status(200)
         .json({ message: "User deleted successfully", deletedUser });

@@ -3,7 +3,4 @@ export interface CreateLanguageDto {
   name: string;
 }
 
-export interface UpdateLanguageDto {
-  userId: number;
-  name?: string;
-}
+

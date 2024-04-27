@@ -16,11 +16,7 @@ router.get(
   authMiddleware,
   languageController.getAllLanguages
 );
-router.put(
-  "/updateLanguage",
-  authMiddleware,
-  languageController.updateLanguage
-);
+
 router.delete(
   "/deleteLanguage",
   authMiddleware,

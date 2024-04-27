@@ -55,9 +55,19 @@ class LanguageService {
     return languages;
   }
 
-  // public async updateLanguage(updateLanguageDto: UpdateLanguageDto): Promise<Language> {
-
-  // }
+  public async deleteLanguage(userId: number): Promise<Language> {
+    const language = await prisma.language.findFirst({ where: { userId } });
+    if(!language){
+      throw DatabaseException.BadRequest("Could not find language")
+    }
+    const deletedLanguage = await prisma.language.delete({
+      where: { id: language.id },
+    });
+    if (!deletedLanguage) {
+      throw DatabaseException.BadRequest("Could not delete language");
+    }
+    return deletedLanguage;
+  }
 }
 
 export default new LanguageService();

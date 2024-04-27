@@ -48,7 +48,7 @@ class UserService {
   }
 
   public async updateUser(
-    email: string,
+    id: number,
     updateUserDto: UpdateUserDto
   ): Promise<User> {
     const validationResult = validateUpdateUserData(updateUserDto);
@@ -59,7 +59,7 @@ class UserService {
         validationResult.errors || []
       );
     }
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findUnique({ where: { id } });
     if (!existingUser) {
       throw DatabaseException.BadRequest("Could not find user");
     }
@@ -67,7 +67,7 @@ class UserService {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
     const updatedUser = await prisma.user.update({
-      where: { email },
+      where: { id },
       data: {
         username: updateUserDto.username || existingUser.username,
         email: updateUserDto.email || existingUser.email,
@@ -80,8 +80,8 @@ class UserService {
     return updatedUser;
   }
 
-  public async deleteUser(email: string): Promise<User> {
-    const deletedUser = await prisma.user.delete({ where: { email } });
+  public async deleteUser(id: number): Promise<User> {
+    const deletedUser = await prisma.user.delete({ where: { id } });
     if (!deletedUser) {
       throw DatabaseException.BadRequest("Could not find user");
     }

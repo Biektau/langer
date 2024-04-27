@@ -99,14 +99,9 @@ const availableLanguages = [
 ] as const;
 
 // Схема для создания пользователя с языком
-const createUserWithLanguageSchema = z.object({
+const createLanguageSchema = z.object({
   userId: z.number(),
   name: z.enum(availableLanguages),
-});
-
-// Схема для обновления пользователя с языком
-const updateUserWithLanguageSchema = z.object({
-  name: z.enum(availableLanguages).optional(),
 });
 
 // Функция валидации данных пользователя с языком
@@ -114,15 +109,7 @@ export function validateCreateLanguageData(data: unknown): {
   success: boolean;
   errors?: string[];
 } {
-  return validateData(createUserWithLanguageSchema, data);
-}
-
-// Функция валидации данных обновления пользователя с языком
-export function validateUpdateLanguageData(data: unknown): {
-  success: boolean;
-  errors?: string[];
-} {
-  return validateData(updateUserWithLanguageSchema, data);
+  return validateData(createLanguageSchema, data);
 }
 
 // Общая функция валидации данных
