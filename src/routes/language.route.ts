@@ -18,9 +18,15 @@ router.get(
 );
 
 router.delete(
-  "/deleteLanguage",
+  "/deleteLanguage/:id",
   authMiddleware,
-  languageController.deleteLanguage
+  languageController.deleteOneLanguage
+);
+
+router.delete(
+  "/deleteAllLanguages",
+  authMiddleware,
+  languageController.deleteAllLanguages
 );
 
 export default router;

@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import userService from "../services/user.service";
 import { UpdateUserDto } from "../dto/user.dto";
+import languageService from "../services/language.service";
+import sessionService from "../services/session.service";
 class UserController {
   public async getProfile(
     req: Request,
@@ -44,11 +46,20 @@ class UserController {
     next: NextFunction
   ): Promise<void> {
     try {
+     
       const currentUser = req.currentUser;
+      const { refreshToken } = req.cookies;
+      await languageService.deleteAllLanguages(currentUser.id);
+      const deletedSession = await sessionService.deleteSession(refreshToken);
       const deletedUser = await userService.deleteUser(currentUser.id);
+      res.clearCookie("refreshToken");
       res
         .status(200)
-        .json({ message: "User deleted successfully", deletedUser });
+        .json({
+          message: "User deleted successfully",
+          deletedUser,
+          deletedSession,
+        });
     } catch (error) {
       next(error);
     }

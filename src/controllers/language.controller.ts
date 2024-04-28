@@ -40,12 +40,37 @@ class LanguageController {
     }
   }
 
-  public async deleteLanguage(
+  public async deleteOneLanguage(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
+      const currentUser = req.currentUser;
+      const languageId = Number(req.params.id);
+      const deletedLanguage = await languageService.deleteOneLanguage(
+        currentUser.id,
+        languageId
+      );
+      res
+        .status(200)
+        .json({ message: "Languge deleted successfully", deletedLanguage });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteAllLanguages(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const currentUser = req.currentUser;
+      await languageService.deleteAllLanguages(
+        currentUser.id
+      );
+      res.status(200).json({ message: "All languges deleted successfully" });
     } catch (error) {
       next(error);
     }

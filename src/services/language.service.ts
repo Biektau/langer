@@ -55,11 +55,17 @@ class LanguageService {
     return languages;
   }
 
-  public async deleteLanguage(userId: number): Promise<Language> {
-    const language = await prisma.language.findFirst({ where: { userId } });
-    if(!language){
-      throw DatabaseException.BadRequest("Could not find language")
+  public async deleteOneLanguage(
+    userId: number,
+    languageId: number
+  ): Promise<Language> {
+    const language = await prisma.language.findFirst({
+      where: { userId, id: languageId },
+    });
+    if (!language) {
+      throw DatabaseException.BadRequest("Could not find language");
     }
+
     const deletedLanguage = await prisma.language.delete({
       where: { id: language.id },
     });
@@ -67,6 +73,20 @@ class LanguageService {
       throw DatabaseException.BadRequest("Could not delete language");
     }
     return deletedLanguage;
+  }
+
+  public async deleteAllLanguages(userId: number) {
+    const languages = await prisma.language.findMany({
+      where: { userId },
+    });
+
+    if (!languages || languages.length === 0) {
+      return;
+    }
+
+    await prisma.language.deleteMany({
+      where: { userId },
+    });
   }
 }
 
