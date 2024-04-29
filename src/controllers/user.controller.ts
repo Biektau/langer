@@ -11,7 +11,7 @@ class UserController {
   ): Promise<void> {
     try {
       const currentUser = req.currentUser;
-      const user = await userService.getUserByEmail(currentUser.email);
+      const user = await userService.getUserById(currentUser.id);
       res.status(200).json({ message: "User data successfully fetched", user });
     } catch (error) {
       next(error);

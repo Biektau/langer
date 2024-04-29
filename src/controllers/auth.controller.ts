@@ -22,7 +22,7 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: newUser.id,
-        email: newUser.email,
+        username: newUser.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
@@ -32,7 +32,7 @@ class AuthController {
         country: "Soon",
         city: "Soon",
         device: "Soon",
-        loginSource: "Soon",        
+        loginSource: "Soon",
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -65,7 +65,7 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: user.id,
-        email: user.email,
+        username: user.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
@@ -144,7 +144,7 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: findedUser.id,
-        email: findedUser.email,
+        username: findedUser.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
