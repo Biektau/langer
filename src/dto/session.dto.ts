@@ -1,6 +1,6 @@
 export interface TokenPayloadDto {
   id: number;
-  email: string;
+  username: string;
 }
 
 export interface SessionDto {

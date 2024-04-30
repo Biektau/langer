@@ -4,6 +4,7 @@ import userService from "../services/user.service";
 import mailService from "../services/mail.service";
 import sessionService from "../services/session.service";
 import { SessionDto, TokenPayloadDto } from "../dto/session.dto";
+import { getClientIp } from "../utils/ip.util";
 
 class AuthController {
   public async signup(
@@ -22,9 +23,12 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: newUser.id,
-        email: newUser.email,
+        username: newUser.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
+
+      const userIp = getClientIp(req);
+      const ipData = await sessionService.getUserData(userIp);
 
       const sessionDto: SessionDto = {
         userId: newUser.id,
@@ -32,7 +36,7 @@ class AuthController {
         country: "Soon",
         city: "Soon",
         device: "Soon",
-        loginSource: "Soon",        
+        loginSource: "Soon",
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -42,7 +46,7 @@ class AuthController {
       });
       res.status(201).json({
         message: "Signup completed successfully",
-        data: { newUser, sendedMailStatus, tokens, session },
+        data: { newUser, sendedMailStatus, tokens, session, userIp, ipData },
       });
     } catch (error) {
       next(error);
@@ -65,7 +69,7 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: user.id,
-        email: user.email,
+        username: user.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
@@ -144,7 +148,7 @@ class AuthController {
 
       const tokenPayloadDto: TokenPayloadDto = {
         id: findedUser.id,
-        email: findedUser.email,
+        username: findedUser.username,
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
