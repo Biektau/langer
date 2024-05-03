@@ -1,20 +1,9 @@
 export interface TokenPayloadDto {
-  id: number;
+  id: string;
   username: string;
 }
 
 export interface SessionDto {
-  userId: number;
+  userId: string;
   token: string;
-  country: string;
-  city: string;
-  device: string;
-  loginSource: string;
-}
-
-export interface LocationDto {
-  country: string;
-  city: string;
-  device: string;
-  loginSource: string;
 }

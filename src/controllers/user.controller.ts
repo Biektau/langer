@@ -49,6 +49,7 @@ class UserController {
      
       const currentUser = req.currentUser;
       const { refreshToken } = req.cookies;
+      
       await languageService.deleteAllLanguages(currentUser.id);
       const deletedSession = await sessionService.deleteSession(refreshToken);
       const deletedUser = await userService.deleteUser(currentUser.id);

@@ -17,8 +17,13 @@ router.get(
   languageController.getAllLanguages
 );
 
+router.get(
+  "/getOneLanguage",
+  authMiddleware,
+  languageController.getOneLanguage);
+
 router.delete(
-  "/deleteLanguage/:id",
+  "/deleteOneLanguage",
   authMiddleware,
   languageController.deleteOneLanguage
 );

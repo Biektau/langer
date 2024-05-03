@@ -12,7 +12,11 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const signupDto: SignupDto = req.body;
+      const signupDto: SignupDto = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+      };
       const newUser = await userService.createUser(signupDto);
 
       const sendedMailStatus = await mailService.sendActivationMail(
@@ -28,11 +32,7 @@ class AuthController {
 
       const sessionDto: SessionDto = {
         userId: newUser.id,
-        token: tokens.refreshToken,
-        country: "Soon",
-        city: "Soon",
-        device: "Soon",
-        loginSource: "Soon",
+        token: tokens.refreshToken,        
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -40,6 +40,7 @@ class AuthController {
         maxAge: 60 * 60 * 1000,
         httpOnly: true,
       });
+
       res.status(201).json({
         message: "Signup completed successfully",
         data: { newUser, sendedMailStatus, tokens, session },
@@ -55,9 +56,13 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const signinDto: SigninDto = req.body;
 
+      const signinDto: SigninDto = {
+        email: req.body.email,
+        password: req.body.password,
+      };
       const user = await userService.getUserByEmail(signinDto.email);
+
       const comparePasswordsResult = await userService.comparePasswords(
         signinDto.password,
         user.password
@@ -71,11 +76,7 @@ class AuthController {
 
       const sessionDto: SessionDto = {
         userId: user.id,
-        token: tokens.refreshToken,
-        country: "Soon",
-        city: "Soon",
-        device: "Soon",
-        loginSource: "Soon",
+        token: tokens.refreshToken,       
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -150,11 +151,7 @@ class AuthController {
 
       const sessionDto: SessionDto = {
         userId: findedUser.id,
-        token: tokens.refreshToken,
-        country: "Soon",
-        city: "Soon",
-        device: "Soon",
-        loginSource: "Soon",
+        token: tokens.refreshToken,       
       };
       const savedSession = await sessionService.saveSession(sessionDto);
 

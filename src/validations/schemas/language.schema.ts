@@ -1,6 +1,5 @@
-import { z, ZodError } from "zod";
+import { z } from "zod";
 
-// Массив допустимых языков для создания
 const availableLanguages = [
   "English",
   "Spanish",
@@ -98,33 +97,8 @@ const availableLanguages = [
   "Zande",
 ] as const;
 
-// Схема для создания пользователя с языком
-const createLanguageSchema = z.object({
-  userId: z.number(),
+export const createLanguageSchema = z.object({
+  userId: z.string(),
   name: z.enum(availableLanguages),
+  purpose: z.string().optional(),
 });
-
-// Функция валидации данных пользователя с языком
-export function validateCreateLanguageData(data: unknown): {
-  success: boolean;
-  errors?: string[];
-} {
-  return validateData(createLanguageSchema, data);
-}
-
-// Общая функция валидации данных
-function validateData<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): { success: boolean; errors?: string[] } {
-  try {
-    schema.parse(data);
-    return { success: true };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map((issue) => issue.message);
-      return { success: false, errors: errorMessages };
-    }
-    throw error;
-  }
-}

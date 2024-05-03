@@ -1,6 +1,7 @@
 export interface CreateLanguageDto {
-  userId: number;
+  userId: string;
   name: string;
+  purpose: string;
 }
 
 

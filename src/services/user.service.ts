@@ -2,18 +2,21 @@ import { PrismaClient, User } from "@prisma/client";
 import { CreateUserDto, UpdateUserDto } from "../dto/user.dto";
 import bcrypt from "bcryptjs";
 import { DatabaseException } from "../exceptions/database.exception";
+import { validateData } from "../validations/main.validation";
 import {
-  validateCreateUserData,
-  validateUpdateUserData,
-} from "../validations/user.validation";
+  createUserSchema,
+  updateUserSchema,
+} from "../validations/schemas/user.schema";
 import { ValidationException } from "../exceptions/validation.exception";
 import randomString from "randomstring";
+import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient();
 
 class UserService {
   public async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const validationResult = validateCreateUserData(createUserDto);
+    
+    const validationResult = validateData(createUserSchema, createUserDto);
 
     if (!validationResult.success) {
       throw ValidationException.UserValidationError(
@@ -35,6 +38,7 @@ class UserService {
     });
     const newUser = await prisma.user.create({
       data: {
+        id: uuidv4(),
         username: createUserDto.username,
         email: createUserDto.email,
         password: hashedPassword,
@@ -48,10 +52,10 @@ class UserService {
   }
 
   public async updateUser(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto
   ): Promise<User> {
-    const validationResult = validateUpdateUserData(updateUserDto);
+    const validationResult = validateData(updateUserSchema, updateUserDto);
 
     if (!validationResult.success) {
       throw ValidationException.UserValidationError(
@@ -63,6 +67,17 @@ class UserService {
     if (!existingUser) {
       throw DatabaseException.BadRequest("Could not find user");
     }
+    if (updateUserDto.email) {
+      const sameEmailInDb = await prisma.user.findUnique({
+        where: { email: updateUserDto.email },
+      });
+      if (sameEmailInDb) {
+        throw DatabaseException.BadRequest(
+          "User with this email already exists"
+        );
+      }
+    }
+
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
@@ -80,7 +95,7 @@ class UserService {
     return updatedUser;
   }
 
-  public async deleteUser(id: number): Promise<User> {
+  public async deleteUser(id: string): Promise<User> {
     const deletedUser = await prisma.user.delete({ where: { id } });
     if (!deletedUser) {
       throw DatabaseException.BadRequest("Could not find user");
@@ -98,7 +113,7 @@ class UserService {
     return user;
   }
 
-  public async getUserById(id: number): Promise<User> {
+  public async getUserById(id: string): Promise<User> {
     const user = await prisma.user.findUnique({
       where: { id },
     });

@@ -1,15 +1,21 @@
 import { PrismaClient, Language } from "@prisma/client";
 import { CreateLanguageDto } from "../dto/language.dto";
-import { validateCreateLanguageData } from "../validations/language.validation";
+import { validateData } from "../validations/main.validation";
+import { createLanguageSchema } from "../validations/schemas/language.schema";
 import { ValidationException } from "../exceptions/validation.exception";
 import { DatabaseException } from "../exceptions/database.exception";
+import { v4 as uuidv4 } from "uuid";
+
 const prisma = new PrismaClient();
 
 class LanguageService {
   public async createLanguage(
     createLanguageDto: CreateLanguageDto
   ): Promise<Language> {
-    const validationResult = validateCreateLanguageData(createLanguageDto);
+    const validationResult = validateData(
+      createLanguageSchema,
+      createLanguageDto
+    );
 
     if (!validationResult.success) {
       throw ValidationException.LanguageValidationError(
@@ -32,8 +38,10 @@ class LanguageService {
     }
     const newLanguage = await prisma.language.create({
       data: {
+        id: uuidv4(),
         userId: createLanguageDto.userId,
         name: createLanguageDto.name,
+        purpose: createLanguageDto.purpose,
       },
     });
 
@@ -43,7 +51,20 @@ class LanguageService {
     return newLanguage;
   }
 
-  public async getAllLanguages(userId: number): Promise<Language[] | string> {
+  public async getOneLanguage(
+    userId: string,
+    languageId: string
+  ): Promise<Language> {
+    const language = await prisma.language.findFirst({
+      where: { userId, id: languageId },
+    });
+    if (!language) {
+      throw DatabaseException.BadRequest("Could not find language");
+    }
+    return language;
+  }
+
+  public async getAllLanguages(userId: string): Promise<Language[] | string> {
     const languages = await prisma.language.findMany({
       where: { userId },
     });
@@ -56,8 +77,8 @@ class LanguageService {
   }
 
   public async deleteOneLanguage(
-    userId: number,
-    languageId: number
+    userId: string,
+    languageId: string
   ): Promise<Language> {
     const language = await prisma.language.findFirst({
       where: { userId, id: languageId },
@@ -75,7 +96,7 @@ class LanguageService {
     return deletedLanguage;
   }
 
-  public async deleteAllLanguages(userId: number) {
+  public async deleteAllLanguages(userId: string) {
     const languages = await prisma.language.findMany({
       where: { userId },
     });
