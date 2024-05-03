@@ -3,24 +3,10 @@ import { PrismaClient, Session } from "@prisma/client";
 import { TokenPayloadDto, SessionDto } from "../dto/session.dto";
 import { DatabaseException } from "../exceptions/database.exception";
 import { AuthException } from "../exceptions/auth.exception";
-import axios from "axios";
 
 const prisma = new PrismaClient();
 
-class SessionService {
-  public async getUserData(ip: string | undefined) {
-    if (!ip) {
-      throw new Error("ip is undefined");
-    }
-    const result = await axios.get(`http://ip-api.com/json/${ip}`);
-
-    if (result.data.status === 'success') {
-      return result.data.country;
-    }
-    if (!result) {
-      throw new Error("Error in axios func");
-    }
-  }
+class SessionService {  
 
   public generateTokens(payload: TokenPayloadDto) {
     if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
