@@ -3,6 +3,7 @@ import userService from "../services/user.service";
 import { UpdateUserDto } from "../dto/user.dto";
 import languageService from "../services/language.service";
 import sessionService from "../services/session.service";
+
 class UserController {
   public async getProfile(
     req: Request,
