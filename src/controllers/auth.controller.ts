@@ -4,7 +4,6 @@ import userService from "../services/user.service";
 import mailService from "../services/mail.service";
 import sessionService from "../services/session.service";
 import { SessionDto, TokenPayloadDto } from "../dto/session.dto";
-import { getClientIp } from "../utils/ip.util";
 
 class AuthController {
   public async signup(
@@ -31,12 +30,9 @@ class AuthController {
       };
       const tokens = sessionService.generateTokens(tokenPayloadDto);
 
-      const userIp = getClientIp(req);
-      const ipData = await sessionService.getUserData(userIp);
-
       const sessionDto: SessionDto = {
         userId: newUser.id,
-        token: tokens.refreshToken,        
+        token: tokens.refreshToken,
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -47,7 +43,7 @@ class AuthController {
 
       res.status(201).json({
         message: "Signup completed successfully",
-        data: { newUser, sendedMailStatus, tokens, session, userIp, ipData },
+        data: { newUser, sendedMailStatus, tokens, session },
       });
     } catch (error) {
       next(error);
@@ -60,7 +56,6 @@ class AuthController {
     next: NextFunction
   ): Promise<void> {
     try {
-
       const signinDto: SigninDto = {
         email: req.body.email,
         password: req.body.password,
@@ -80,7 +75,7 @@ class AuthController {
 
       const sessionDto: SessionDto = {
         userId: user.id,
-        token: tokens.refreshToken,       
+        token: tokens.refreshToken,
       };
       const session = await sessionService.saveSession(sessionDto);
 
@@ -155,7 +150,7 @@ class AuthController {
 
       const sessionDto: SessionDto = {
         userId: findedUser.id,
-        token: tokens.refreshToken,       
+        token: tokens.refreshToken,
       };
       const savedSession = await sessionService.saveSession(sessionDto);
 
