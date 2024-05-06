@@ -22,6 +22,20 @@ export class ValidationException extends Error {
     return new ValidationException(400, message, errors);
   }
 
+  static DictionaryValidationError(
+    message: string,
+    errors: string[]
+  ): ValidationException {
+    return new ValidationException(400, message, errors);
+  }
+
+  static WordValidationError(
+    message: string,
+    errors: string[]
+  ): ValidationException {
+    return new ValidationException(400, message, errors);
+  }
+  
   toResponse(): { status: number; message: string; errors: string[] } {
     return {
       status: this.status,

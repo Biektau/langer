@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -8,16 +9,17 @@ datasource db {
 }
 
 model User {
-  id             String     @id @default(uuid())
+  id             String       @id @default(uuid())
   username       String
-  email          String     @unique
+  email          String       @unique
   password       String
-  isActivated    Boolean    @default(false)
+  isActivated    Boolean      @default(false)
   activationLink String
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   sessions       Session[]
   languages      Language[]
+  dictionaries   Dictionary[]
 }
 
 model Session {
@@ -39,26 +41,29 @@ model Language {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   dictionaries Dictionary[]
+  words        Word[]
 }
 
 model Dictionary {
   id         String   @id @default(uuid())
   name       String
   languageId String
-  userId     String
   language   Language @relation(fields: [languageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  words     Word[]
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  words      Word[]
 }
 
 model Word {
-  id           String        @id @default(uuid())
+  id           String     @id @default(uuid())
   original     String
   translation  String
   dictionaryId String
   dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
+  languageId   String
+  language     Language   @relation(fields: [languageId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }

@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.route";
 import userRouter from "./routes/user.route";
 import languageRouter from "./routes/language.route";
+import dictionaryRouter from "./routes/dictionary.route";
+import wordRouter from "./routes/word.route";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
 import errorMiddleware from "./middlewares/error.middleware";
@@ -16,6 +18,8 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/language", languageRouter);
+app.use("/api/dictionary", dictionaryRouter);
+app.use("/api/word", wordRouter);
 
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -24,7 +28,5 @@ app.use(errorMiddleware);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log(
-    `App listening at http://localhost:${port}`
-  );
+  console.log(`App listening at http://localhost:${port}`);
 });

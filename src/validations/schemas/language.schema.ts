@@ -98,7 +98,7 @@ const availableLanguages = [
 ] as const;
 
 export const createLanguageSchema = z.object({
-  userId: z.string(),
+  userId: z.string().min(1),
   name: z.enum(availableLanguages),
   purpose: z.string().optional(),
 });
